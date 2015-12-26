@@ -1,33 +1,21 @@
 namespace Awamanju
 
 open WebSharper
-open WebSharper.JavaScript
-open WebSharper.Html.Client
+open WebSharper.UI.Next
+open WebSharper.UI.Next.Html
+open WebSharper.UI.Next.Client
 
 [<JavaScript>]
 module Client =
 
-    let Start input k =
-        async {
-            let! data = Server.DoSomething input
-            return k data
-        }
-        |> Async.Start
-
     let Main () =
-        let input = Input [Attr.Value ""] -< []
-        let output = H1 []
-        Div [
-            input
-            Button [Text "Send"]
-            |>! OnClick (fun _ _ ->
-                async {
-                    let! data = Server.DoSomething input.Value
-                    output.Text <- data
-                }
-                |> Async.Start
-            )
-            HR []
-            H4 [Attr.Class "text-muted"] -< [Text "The server responded:"]
-            Div [Attr.Class "jumbotron"] -< [output]
+        let rvContent = Var.Create ""
+        let vUpperContent =
+            rvContent.View
+            |> View.Map (fun t -> t.ToUpper())
+        div [
+            Doc.Input [] rvContent
+            label [textView vUpperContent]
         ]
+
+         
